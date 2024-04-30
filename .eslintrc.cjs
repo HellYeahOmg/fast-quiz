@@ -53,7 +53,8 @@ const config = {
           "db"
         ]
       }
-    ]
+    ],
+      "react/no-unescaped-entities": 0
   }
 }
 module.exports = config;
