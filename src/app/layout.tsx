@@ -2,7 +2,22 @@ import "~/styles/globals.css";
 import "@radix-ui/themes/styles.css";
 
 import { Inter } from "next/font/google";
-import { Container, Theme } from "@radix-ui/themes";
+import {
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Separator,
+  Theme,
+} from "@radix-ui/themes";
+import Link from "next/link";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,12 +35,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Theme>
-          <Container size={"1"}>{children}</Container>
-        </Theme>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Theme>
+            <Flex align={"center"} py="2" height="60px">
+              <Container size={"3"}>
+                <Flex justify={"between"}>
+                  <Link href={"/"}>
+                    <Heading as={"h1"}>Tech-quiz</Heading>
+                  </Link>
+
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                  <SignedOut>
+                    <SignInButton>
+                      <Button>sign in</Button>
+                    </SignInButton>
+                  </SignedOut>
+                </Flex>
+              </Container>
+            </Flex>
+            <Separator my="3" size="4" />
+            <Container size={"3"}>{children}</Container>
+          </Theme>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
