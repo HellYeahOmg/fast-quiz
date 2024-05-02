@@ -1,5 +1,5 @@
 import { getMyQuizzes } from "~/server/queries";
-import { Box, Card, Flex, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
 import Link from "next/link";
 
 export default async function Page() {
@@ -16,10 +16,8 @@ export default async function Page() {
     return <Text>You have no quizzes yet.</Text>;
   }
 
-  // TODO: add grids
-
   return (
-    <Flex gap={"4"}>
+    <Grid width="auto" gap="3" columns={{ initial: "1", sm: "2", md: "3" }}>
       {quizzes.map((item) => (
         <Link href={`/quiz/${item.id}`} key={item.id} shallow passHref>
           <Card>
@@ -44,6 +42,6 @@ export default async function Page() {
           </Card>
         </Link>
       ))}
-    </Flex>
+    </Grid>
   );
 }
