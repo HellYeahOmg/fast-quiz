@@ -44,8 +44,7 @@ export const createQuiz = async (params?: QueryParams) => {
 
   const newQuestions = await fetchQuiz(params);
 
-  // TODO: add error page
-  if (newQuestions instanceof Error) return redirect("/");
+  if (newQuestions instanceof Error) return redirect("/no-questions");
 
   if (!userId) {
     redirect("/sign-in");
