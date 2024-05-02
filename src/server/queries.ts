@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-const baseUrl = new URL("https://quizapi.io/api/v1/");
+const baseUrl = "https://quizapi.io/api/v1/";
 
 type QueryParams = {
   difficulty?: difficulty;
