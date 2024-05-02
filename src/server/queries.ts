@@ -1,7 +1,7 @@
 "use server";
 
 import { env } from "~/env";
-import { type category, type difficulty, type QuizQuestion } from "~/types";
+import { type difficulty, type QuizQuestion } from "~/types";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "~/server/db";
 import { questions, quizzes, type SelectQuestions } from "~/server/db/schema";
@@ -9,27 +9,29 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-const apiUrl = new URL("https://quizapi.io/api/v1/questions");
-apiUrl.searchParams.append("apiKey", env.QUIZ_KEY);
-apiUrl.searchParams.append("limit", String(10));
+const baseUrl = new URL("https://quizapi.io/api/v1/");
 
 type QueryParams = {
   difficulty?: difficulty;
-  category?: category;
+  category?: string;
 };
 
 const fetchQuiz = async (params?: QueryParams) => {
   const { difficulty, category } = params ?? {};
 
+  const url = new URL(baseUrl + "questions");
+  url.searchParams.append("apiKey", env.QUIZ_KEY);
+  url.searchParams.append("limit", String(10));
+
   if (difficulty) {
-    apiUrl.searchParams.append("difficulty", difficulty);
+    url.searchParams.append("difficulty", difficulty);
   }
 
   if (category) {
-    apiUrl.searchParams.append("category", category);
+    url.searchParams.append("category", category);
   }
 
-  const apiUrlString = apiUrl.toString();
+  const apiUrlString = url.toString();
   const data = await fetch(apiUrlString, { cache: "no-store" });
 
   if (data.ok) {
@@ -132,4 +134,16 @@ export const submitQuiz = async (
     .where(eq(quizzes.id, quizId));
 
   revalidatePath("/quiz/[id]");
+};
+
+export const fetchCategories = async () => {
+  const url = new URL(`${baseUrl}categories`);
+  url.searchParams.append("apiKey", env.QUIZ_KEY);
+  url.searchParams.append("limit", String(20));
+
+  const response = await fetch(url, { cache: "no-store" });
+
+  return ((await response.json()) as Array<{ id: number; name: string }>).map(
+    (item) => item.name,
+  );
 };

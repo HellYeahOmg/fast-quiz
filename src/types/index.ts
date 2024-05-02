@@ -2,25 +2,6 @@ export type difficulty = "Easy" | "Medium" | "Hard";
 
 export const difficultyOptions = ["Easy", "Medium", "Hard"] as const;
 
-export type category =
-  | "Linux"
-  | "DevOps"
-  | "Networking"
-  | "Programming"
-  | "Cloud"
-  | "Kubernetes"
-  | "Docker";
-
-export const categoryOptions = [
-  "Linux",
-  "DevOps",
-  "Networking",
-  "Programming",
-  "Cloud",
-  "Kubernetes",
-  "Docker",
-] as const;
-
 export interface QuizQuestion {
   id: number;
   question: string;
@@ -28,7 +9,7 @@ export interface QuizQuestion {
   explanation?: string;
   tip: string | null;
   tags: string[];
-  category: category;
+  category: string;
   difficulty: difficulty;
   multiple_correct_answers: string;
   answers: {
