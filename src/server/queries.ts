@@ -44,13 +44,13 @@ const fetchQuiz = async (params?: QueryParams) => {
 export const createQuiz = async (params?: QueryParams) => {
   const { userId } = auth();
 
-  const newQuestions = await fetchQuiz(params);
-
-  if (newQuestions instanceof Error) return redirect("/no-questions");
-
   if (!userId) {
     redirect("/sign-in");
   }
+
+  const newQuestions = await fetchQuiz(params);
+
+  if (newQuestions instanceof Error) return redirect("/no-questions");
 
   const quiz = await db
     .insert(quizzes)
@@ -61,11 +61,13 @@ export const createQuiz = async (params?: QueryParams) => {
     })
     .returning({ id: quizzes.id });
 
-  if (!quiz.length) {
-    return new Error("Something went wrong. Could not create quiz");
+  if (!quiz[0]) {
+    return new Error(
+      "Something went wrong. Could not create quiz. Please, try again later.",
+    );
   }
 
-  const newQuizId = quiz[0]!.id;
+  const newQuizId = quiz[0].id;
 
   const mappedQuestions = newQuestions.map((question) => ({
     ...question,
@@ -141,9 +143,12 @@ export const fetchCategories = async () => {
   url.searchParams.append("apiKey", env.QUIZ_KEY);
   url.searchParams.append("limit", String(20));
 
-  const response = await fetch(url, { cache: "no-store" });
-
-  return ((await response.json()) as Array<{ id: number; name: string }>).map(
-    (item) => item.name,
-  );
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    return ((await response.json()) as Array<{ id: number; name: string }>).map(
+      (item) => item.name,
+    );
+  } catch (e) {
+    return new Error("Failed to fetch categories. Please, try again later.");
+  }
 };

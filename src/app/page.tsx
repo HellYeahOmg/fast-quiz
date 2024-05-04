@@ -21,7 +21,7 @@ export default async function Home() {
         <form
           action={async () => {
             "use server";
-            return createQuiz();
+            await createQuiz();
           }}
         >
           <SubmitButton>Start a random quiz</SubmitButton>
